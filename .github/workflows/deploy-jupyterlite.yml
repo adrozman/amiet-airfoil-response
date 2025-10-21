@@ -1,0 +1,40 @@
+name: Build and Deploy JupyterLite
+
+on:
+  push:
+    branches: [main] # Runs every time you push to the main branch
+
+permissions:
+  contents: write # Allows the action to push to your gh-pages branch
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install JupyterLite
+        run: |
+          pip install jupyterlite-core jupyterlite-pyodide-kernel
+
+      - name: Build JupyterLite Site
+        run: |
+          # Build the base JupyterLite site, copying your notebook into it
+          jupyter lite build --contents . --output-dir dist
+
+          # Find and add the pyodide-compatible wheels for your libraries
+          # This is the magic step that adds numpy, scipy, etc.
+          jupyter lite pip --piplite-wheels-dir ./dist/piplite -r requirements.txt
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          # This pushes your built site to the 'gh-pages' branch
