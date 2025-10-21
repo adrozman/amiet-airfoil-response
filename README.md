@@ -1,5 +1,9 @@
 # amiet-airfoil-response
 
+web link:
+
+https://adrozman.github.io/amiet-airfoil-response/
+
 Welcome to my first github display! I'm exploring the fundamentals
 of aeroacoustics using Amiet's theory for airfoil-turbulence interaction... 
 
